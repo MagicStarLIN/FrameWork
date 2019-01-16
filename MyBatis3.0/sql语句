@@ -1,0 +1,70 @@
+create table stars(
+       starid number(3),
+       sname varchar2(10),
+       age number(2),
+       salary number(10)
+       );
+       
+select * from stars
+alter table stars alter column salary number(10);
+
+drop table stars
+
+    select * from stars where salary = (SELECT MAX(salary) FROM stars)
+    
+    select count(*) from stars
+    
+    
+    
+--建表    
+    create table depts(
+    deptid number(2),
+    deptname varchar2(10),
+    leader varchar2(10)
+    );
+      
+   create table emps(
+    empid number(2),
+    empname varchar2(10),
+    salary number(10),
+    age number(2),
+    dept_id number(2)
+    );     
+
+--主键     
+    alter table depts
+add constraint PK_deptid
+primary key (deptid) 
+
+--外键
+alter table emps
+add constraint FK_deptid--"FK"为外键的缩写
+foreign key (dept_id) references depts(deptid) --注意'关联的表名'和'关联的字段名'  
+
+--插入数据
+insert into depts (deptid,deptname,leader)values(1,'javaSE','mybatis');
+insert into depts (deptid,deptname,leader)values(2,'jacaEE','html');    
+
+insert into emps(empid,empname,salary,age,dept_id)values(1,'lcl_1',10001,20,1);
+insert into emps(empid,empname,salary,age,dept_id)values(2,'lcl_2',10002,20,1);
+insert into emps(empid,empname,salary,age,dept_id)values(3,'lcl_3',10003,20,1);
+insert into emps(empid,empname,salary,age,dept_id)values(4,'lcl_4',10004,20,2);
+insert into emps(empid,empname,salary,age,dept_id)values(5,'lcl_5',10005,20,2);
+insert into emps(empid,empname,salary,age,dept_id)values(6,'lcl_6',10006,20,2);
+ 
+--查询
+select * from emps
+
+select * from depts
+
+--删除
+delete emps where salary = 10000;
+
+
+  select empid,empname,salary,age from emps,depts where deptid = dept_id and deptid=1;
+  select * from emps where salary = (select max(salary) from emps)
+  
+    select * from stars where salary = (SELECT MAX(salary) FROM stars)
+    
+    
+      select * from depts,emps where salary = ((select MAX(salary) from emps) )and deptid=dept_id;
