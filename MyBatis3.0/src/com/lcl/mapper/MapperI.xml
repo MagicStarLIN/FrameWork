@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lcl.mapper.MapperI">
+	<resultMap type="com.lcl.formobject.Dept" id="dept1">
+		<id property="deptid" column="deptid" />
+		<result property="deptname" column="deptname" />
+		<result property="leader" column="leader" />
+		<collection property="EmpList" ofType="com.lcl.formobject.Emp">
+			<id property="empid" column="empid" />
+			<result property="empname" column="empname" />
+			<result property="salary" column="salary" />
+			<result property="age" column="age" />
+			<result property="dept_id" column="dept_id" />
+		</collection>
+	</resultMap>
+	<select id="findDeptandEmp" parameterType="int" resultMap="dept1">
+		select * from emps,depts where depts.deptid = emps.dept_id and depts.deptid=#{dept_id}
+	</select>
+	<select id="findDeptandEmpMAXSALARY" resultMap = "dept1">
+	      select * from depts,emps where salary = ((select MAX(salary) from emps) )and deptid=dept_id
+	</select>
+
+</mapper>
