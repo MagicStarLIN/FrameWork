@@ -1,19 +1,4 @@
-create table stars(
-       starid number(3),
-       sname varchar2(10),
-       age number(2),
-       salary number(10)
-       );
-       
-select * from stars
-alter table stars alter column salary number(10);
-
-drop table stars
-
-    select * from stars where salary = (SELECT MAX(salary) FROM stars)
-    
-    select count(*) from stars
-    
+  
     
     
 --建表    
