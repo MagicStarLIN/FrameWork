@@ -1,0 +1,8 @@
+#ioc控制反转 di依赖注入
+student=com.lcl.pojo.Student
+student-ClassName=1603
+student-Person=person
+person=com.lcl.pojo.Person
+person-name=lcl
+person-age=20
+person-sex=man
