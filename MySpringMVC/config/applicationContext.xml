@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+<!-- 配置c3p0连接池 -->
+<context:property-placeholder location="classpath:c3p0.properties" />
+
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${driverClass}"></property>
+		<property name="jdbcUrl" value="${jdbcUrl}"></property>
+		<property name="user" value="${user}"></property>
+		<property name="password" value="${password}"></property>
+		<property name="maxPoolSize" value="${maxPoolSize}"></property>
+		<property name="minPoolSize" value="${minPoolSize}"></property>
+		<property name="initialPoolSize" value="${initialPoolSize}"></property>
+		<property name="acquireIncrement" value="${acquireIncrement}"></property>
+	</bean>
+
+	<bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="typeAliasesPackage" value="com.lcl.pojo"></property>
+		<property name="mapperLocations" value="classpath:com/lcl/mapper/*.xml"></property>
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+	</bean>
+
+	<mybatis-spring:scan base-package="com.lcl"/>
+
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+
+	
+
+
+<!-- 步骤3：在applicationContext.xml配置文件中配置组件包扫描路径 -->
+    <!-- 目的：为了让ApringMVC能够遭到路径下所有的组件 -->
+    <!--
+    组件：Component
+        Controller：控制器（相当于原来的Servlet） -> 请求分发
+        Service：服务层 -> 具体执行业务逻辑
+        Repository：DAO层（Mapper层） -> 访问数据库
+        组件：就是在Web项目中起作用的类的对象：Servlet对象，Service对象，DAO对象
+    -->
+    <context:component-scan base-package="com.lcl"></context:component-scan>
+     <!-- 步骤6：配置视图解析器 -->
+    <!--
+    视图解析器的作用：
+        当一个控制器方法返回String返回值的时候，将会被视图解析器截获，并按照视图解析器中配置的前缀（prefix）和后缀（suffix）
+        来拼接一个内部视图（前端页面）的访问路径，拼接公式：prefix + 返回值字符串 + suffix
+            例如：sayHi方法返回字符串"sayHi"
+                定位到的页面路径就是：/html/ + "sayHi" + .html = /html/sayHi.html
+    -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/html/"></property>
+        <property name="suffix" value=".html"></property>
+    </bean>
+    
+        <!-- 步骤7：（额外步骤）配置允许手动访问静态页面（html页面）和启用注解标签 -->
+    <mvc:default-servlet-handler/>
+    <!-- 启用@Controller注解标签 -->
+    <mvc:annotation-driven></mvc:annotation-driven>
+</beans>
