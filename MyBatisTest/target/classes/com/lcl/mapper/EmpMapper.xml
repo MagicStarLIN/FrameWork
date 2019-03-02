@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lcl.mapper.EmpMapper">
+	<sql id="emp_colums">
+		e.emp_id,
+		e.e_name,
+		e.email,
+		e.phone,
+		e.hire_date,
+		e.job_id,
+		e.salary,
+		e.comm_pct,
+		e.manager_id,
+		e.dept_id
+	</sql>
+	<sql id="dept_colums">
+		d.dept_id,
+		d.dept_name,
+		d.manager_id,
+		d.location_id 
+	</sql>
+	<select id="queryEmpByIdWithDept" resultMap = "queryEmpByIdWithDeptMap">
+		select <include refid="emp_colums"/>,<include refid="dept_colums"/>
+		from Emp e left outer join Dept d
+		on e.dept_id = d.dept_id
+		where e.emp_id = #{id}
+	
+	</select>
+	<resultMap id = "queryEmpByIdWithDeptMap" type = "emp">
+		<id column = "emp_id" property="empId"/>
+		<result column="e_name" property="eName" />
+		<result column="email" property="email" />
+		<result column="phone" property="phone" />
+		<result column="hire_date" property="hireDate" />
+		<result column="job_id" property="jobId" />
+		<result column="salary" property="salary" />
+		<result column="comm_pct" property="commPct" />
+		<result column="manager_id" property="managerId" />
+		<result column="dept_id" property="deptId" />
+		<association property="dept" javaType="com.lcl.pojo.Dept">
+			<id column="dept_id" property="deptId" />
+			<result column="dept_name" property="deptName" />
+			<result column="manager_id" property="managerId" />
+			<result column="location_id" property="locationId" />
+		</association>
+	</resultMap>
+	<select id="queryEmpByIdWithDeptStep" resultMap="queryEmpByIdWithDeptStepMap">
+		select * from Emp where emp_id = #{id}
+	</select>
+	<resultMap id = "queryEmpByIdWithDeptStepMap" type = "emp">
+		<id column = "emp_id" property="empId"/>
+		<result column="e_name" property="eName" />
+		<result column="email" property="email" />
+		<result column="phone" property="phone" />
+		<result column="hire_date" property="hireDate" />
+		<result column="job_id" property="jobId" />
+		<result column="salary" property="salary" />
+		<result column="comm_pct" property="commPct" />
+		<result column="manager_id" property="managerId" />
+		<result column="dept_id" property="deptId" />
+		<association 
+			property="dept"
+			select="com.lcl.mapper.DeptMapper.queryDeptById"
+			column="dept_id"
+		></association>	
+	</resultMap>
+	<select id="queryEmpByIdwithTotalSalary" resultType="emp">
+		SELECT *, salary * (1 + comm_pct) total_salary FROM Emp WHERE emp_id = #{id}
+	</select>
+		<!--
+	7.实现针对Emp表按照如下条件的查询操作：
+	如果条件中存在员工姓名，则按照员工姓名进行模糊查询
+	如果条件中存在员工邮箱，则按照员工邮箱进行模糊查询
+	如果条件中存在员工所在部门编号，则按照员工所在部门编号进行查询
+	如果上述条件都存在，则按照全部条件进行查询
+	如果上述条件仅有部分存在，则按照存在的条件进行查询
+	查询结束之后对得到的员工信息按照员工编号进行正序排序
+	-->
+	<select id="queryEmpDynamic" resultType = "emp">
+		select * from emp
+		<trim prefix="where" suffix="order by emp_id" prefixOverrides="and">
+			<if test="eName!=null">
+				<bind name="name1" value="'%' + eName + '%'"/>
+				e_name like #{name1}
+			</if>
+			
+			<if test="email != null">
+				<bind name="_email" value="'%' + email + '%'"/>
+				and email like #{_email}
+			</if>
+			
+			<if test="empId != null">
+				and emp_id = #{empId}
+			</if>
+			
+		</trim>
+	</select>
+	
+	<select id = "queryEmpByPage" resultType = "emp">
+		select * from emp limit #{startIndex}, #{pageSize}
+	
+	</select>
+</mapper>

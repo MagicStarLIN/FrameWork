@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="com.lcl.mapper.UserMapper">
+	<select id="queryAllUsers" resultType="user">
+		select * from User
+	</select>
+	<select id="queryUserById" resultType="user">
+		select * from User where u_id = #{id}
+	</select>
+	<select id="queryUserFuzzy" resultType = "user">
+	<bind name="name1" value="'%' + word + '%'"/>
+		select * from User where username like #{name1}
+	</select>
+	</mapper>

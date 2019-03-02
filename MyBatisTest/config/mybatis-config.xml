@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<!-- 5.引用外部的db.properties文件对Mybatis进行数据源配置 -->
+	<properties resource="db.properties"></properties>
+		<settings>
+			<!-- 1.启用驼峰命名法对应数据库中字段的下划线 -->
+			<setting name="mapUnderscoreToCamelCase" value="true"/>
+			<!-- 2.启用懒加载模式 -->
+			<setting name="lazyLoadingEnabled" value="true"/>
+			<!-- 3.禁用侵入式懒加载模式 -->
+			<setting name="aggressiveLazyLoading" value="false"/>
+		</settings>
+	<!-- 3.配置包扫描的POJO别名-->
+	<typeAliases>
+		<package name="com.lcl.pojo"/>
+	</typeAliases>
+	<!-- 6.db.properties文件中配置两组数据源信息
+	一组对应MySQL数据库中的test库，一组对应MySQL数据库下的company库
+	并将这两组数据源分别配置在Mybatis的全局配置文件中，可以随意切换 -->
+	<environments default="company">
+		<environment id="test">
+			<transactionManager type="JDBC"></transactionManager>
+			<dataSource type="POOLED">
+			<property name="driver" value="${driver}"/>
+			<property name="url" value="${test.url}"/>
+			<property name="username" value="${username}"/>
+			<property name="password" value="${password}"/>
+			</dataSource>
+		</environment>
+		<environment id="company">
+			<transactionManager type="JDBC"></transactionManager>
+			<dataSource type="POOLED">
+			<property name="driver" value="${driver}"/>
+			<property name="url" value="${company.url}"/>
+			<property name="username" value="${username}"/>
+			<property name="password" value="${password}"/>
+			</dataSource>
+		</environment>
+	</environments>
+	<!-- 4.配置包扫描的Mapper映射文件注册  -->
+	<mappers>
+		<package name="com.lcl.mapper"/>
+	</mappers>
+</configuration>

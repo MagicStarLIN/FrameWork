@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lcl.mapper.JobLevelMapper">
+<sql id="joblevel_colums">
+	j.job_level,
+	j.lowest_sal,
+	j.highest_sal
+</sql>
+<sql id="emp_colums">
+		e.emp_id,
+		e.e_name,
+		e.email,
+		e.phone,
+		e.hire_date,
+		e.job_id,
+		e.salary,
+		e.comm_pct,
+		e.manager_id,
+		e.dept_id
+	</sql>
+	<select id="queryEmpWithSalaryLevel" resultMap = "queryEmpWithSalaryLevelMap">
+		SELECT <include refid="emp_colums"/>,<include refid="joblevel_colums"/>
+		FROM Emp e RIGHT OUTER JOIN Job_Level j
+		ON e.salary BETWEEN j.lowest_sal AND j.highest_sal
+		WHERE j.job_level = #{level}
+	</select>
+	<resultMap id="queryEmpWithSalaryLevelMap" type="emp">
+		<id column = "emp_id" property="empId"/>
+		<result column="e_name" property="eName" />
+		<result column="email" property="email" />
+		<result column="phone" property="phone" />
+		<result column="hire_date" property="hireDate" />
+		<result column="job_id" property="jobId" />
+		<result column="salary" property="salary" />
+		<result column="comm_pct" property="commPct" />
+		<result column="manager_id" property="managerId" />
+		<result column="dept_id" property="deptId" />
+		<association property="jobLevel" javaType="jobLevel">
+			<result column="job_level" property="jobLevel" />
+			<result column="lowest_sal" property="lowestSal" />
+			<result column="highest_sal" property="highestSal" />
+		</association>
+	</resultMap>	
+		
+</mapper>
